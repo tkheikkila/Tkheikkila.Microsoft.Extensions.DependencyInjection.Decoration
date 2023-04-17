@@ -13,6 +13,7 @@ internal class Service
 	public static Service FromType(Type serviceType, Type implementingType)
 	{
 		var provider = Expression.Parameter(typeof(IServiceProvider), name: "provider");
+		var genericArguments = Expression.Parameter(typeof(Type[]), name: "genericArguments");
 
 		var constructor = implementingType.GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).SingleOrDefault();
 		if (constructor is null)
@@ -20,7 +21,7 @@ internal class Service
 			// Use implicit default constructor
 			 var factory = Expression.Lambda<ServiceFactory>(
 				Expression.New(implementingType),
-				provider
+				provider, genericArguments
 			);
 
 			 return new Service(serviceType, factory);
@@ -29,14 +30,14 @@ internal class Service
 		{
 
 			var constructorArgs = constructor.GetParameters()
-				.Select(parameter => InjectDependency(provider, parameter.ParameterType));
+				.Select(parameter => parameter.ParameterType.CreateServiceFactoryExpression(provider, genericArguments));
 
 			var factory = Expression.Lambda<ServiceFactory>(
 				Expression.New(
 					constructor,
 					constructorArgs
 				),
-				provider
+				provider, genericArguments
 			);
 
 			return new Service(serviceType, factory);
@@ -46,6 +47,7 @@ internal class Service
 	public static Service FromFactory(Type serviceType, ServiceFactory serviceFactory)
 	{
 		var provider = Expression.Parameter(typeof(IServiceProvider), name: "provider");
+		var genericArguments = Expression.Parameter(typeof(Type[]), name: "genericArguments");
 
 		var factory = Expression.Lambda<ServiceFactory>(
 			Expression.Call(
@@ -53,9 +55,9 @@ internal class Service
 					? null
 					: Expression.Constant(serviceFactory.Target),
 				serviceFactory.Method,
-				provider
+				provider, genericArguments
 			),
-			provider
+			provider, genericArguments
 		);
 
 		return new Service(serviceType, factory);
@@ -64,10 +66,11 @@ internal class Service
 	public static Service FromInstance(Type serviceType, object instance)
 	{
 		var provider = Expression.Parameter(typeof(IServiceProvider), name: "provider");
+		var genericArguments = Expression.Parameter(typeof(Type[]), name: "genericArguments");
 
 		var factory = Expression.Lambda<ServiceFactory>(
 			Expression.Constant(instance),
-			provider
+			provider, genericArguments
 		);
 
 		return new Service(serviceType, factory);

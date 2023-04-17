@@ -21,7 +21,7 @@ internal sealed class ExpressionFactoryLifetimeSelector : ILifetimeSelector
         return new BasicService(
             ServiceDescriptor.Describe(
                 _serviceType,
-                provider => factory(provider),
+                provider => factory(provider, Array.Empty<Type>()),
                 lifetime
             )
         );

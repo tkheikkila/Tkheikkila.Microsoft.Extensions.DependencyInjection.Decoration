@@ -20,7 +20,7 @@ internal sealed class DecoratedService : IServiceConfiguration
         services.Add(
             ServiceDescriptor.Describe(
                 service.ServiceType,
-                provider => factory(provider),
+                provider => factory(provider, Array.Empty<Type>()),
                 _lifetime
             )
         );

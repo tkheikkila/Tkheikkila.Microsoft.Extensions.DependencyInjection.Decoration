@@ -15,7 +15,7 @@ public static class TestCases
 
 	public static IEnumerable<Setup> Create(ServiceConfig<IService>? config = null)
 	{
-		return Create<IService, ServiceMock>(new ServiceMock(), _ => new ServiceMock(), config);
+		return Create<IService, ServiceMock>(new ServiceMock(), (_, _) => new ServiceMock(), config);
     }
 
 	public static IEnumerable<Setup> Create(Type serviceType, Type implementationType, ServiceConfig? config = null)

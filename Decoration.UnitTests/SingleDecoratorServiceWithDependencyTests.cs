@@ -12,7 +12,7 @@ public sealed class SingleDecoratorServiceWithDependencyTests : IDisposable
 	public static IEnumerable<object?[]> DefaultCases
 		=> TestCases.Create<IService, ServiceWithDependencyMock>(
 				new ServiceWithDependencyMock(default!),
-				provider => new ServiceWithDependencyMock(provider),
+				(provider, _) => new ServiceWithDependencyMock(provider),
 				service => service.Use<DecoratorMock>()
 			)
 			.AsTheoryParameters();

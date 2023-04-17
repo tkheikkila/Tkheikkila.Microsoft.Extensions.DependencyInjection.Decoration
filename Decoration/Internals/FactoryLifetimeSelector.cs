@@ -18,7 +18,7 @@ internal sealed class FactoryLifetimeSelector : ILifetimeSelector
         return new BasicService(
             ServiceDescriptor.Describe(
                 _serviceType,
-                provider => _factory(provider),
+                provider => _factory(provider, Array.Empty<Type>()),
                 lifetime
             )
         );

@@ -2,8 +2,6 @@
 
 namespace Tkheikkila.Microsoft.Extensions.DependencyInjection.Decoration.Internals;
 
-public delegate object ServiceFactory(IServiceProvider provider);
-
 internal sealed class DecoratedServiceBuilder : IServiceBuilder
 {
 	private readonly Type _serviceType;
